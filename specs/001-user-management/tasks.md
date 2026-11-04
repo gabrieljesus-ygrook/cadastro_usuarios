@@ -25,11 +25,11 @@ description: "Tarefas de implementação TDD para gerenciamento de usuários"
 
 **Objetivo**: preparar persistência Identity, configuração segura e composição da API para as histórias.
 
-- [ ] T009 Criar `src/CadastroUsuarios.Api/Infrastructure/Identity/ApplicationUser.cs` herdando de `IdentityUser` e adicionar a propriedade obrigatória `Name`.
-- [ ] T010 Criar `src/CadastroUsuarios.Api/Infrastructure/Persistence/ApplicationDbContext.cs` derivando de `IdentityDbContext<ApplicationUser>`.
-- [ ] T011 Completar `tests/CadastroUsuarios.IntegrationTests/Infrastructure/ApiFactory.cs` para aplicar migrations no banco SQL Server isolado de testes e limpar os dados entre casos.
-- [ ] T012 Escrever `tests/CadastroUsuarios.IntegrationTests/Infrastructure/IdentityConfigurationTests.cs` para verificar registro de SQL Server/Identity e política mínima de senha; executar `dotnet test` e confirmar as falhas esperadas antes da configuração.
-- [ ] T013 Configurar em `src/CadastroUsuarios.Api/Program.cs` `ApplicationDbContext`, provider SQL Server, Identity com roles e lifetime scoped para fazer passar o teste de composição.
+- [X] T009 Criar `src/CadastroUsuarios.Api/Infrastructure/Identity/ApplicationUser.cs` herdando de `IdentityUser` e adicionar a propriedade obrigatória `Name`.
+- [X] T010 Criar `src/CadastroUsuarios.Api/Infrastructure/Persistence/ApplicationDbContext.cs` derivando de `IdentityDbContext<ApplicationUser>`.
+- [X] T011 Completar `tests/CadastroUsuarios.IntegrationTests/Infrastructure/ApiFactory.cs` para aplicar migrations no banco SQL Server isolado de testes e limpar os dados entre casos.
+- [X] T012 Escrever `tests/CadastroUsuarios.IntegrationTests/Infrastructure/IdentityConfigurationTests.cs` para verificar registro de SQL Server/Identity e política mínima de senha; executar `dotnet test` e confirmar as falhas esperadas antes da configuração.
+- [X] T013 Configurar em `src/CadastroUsuarios.Api/Program.cs` `ApplicationDbContext`, provider SQL Server, Identity com roles e lifetime scoped para fazer passar o teste de composição.
 - [ ] T014 Configurar em `src/CadastroUsuarios.Api/Program.cs` política Identity com mínimo de 8 caracteres e sem exigências adicionais de composição; executar o teste de configuração e confirmar que passou.
 - [ ] T015 Documentar em `src/CadastroUsuarios.Api/appsettings.json` somente chaves não secretas e manter connection strings locais em User Secrets.
 - [ ] T016 Criar migration inicial do schema Identity e confirmar os arquivos em `src/CadastroUsuarios.Api/Infrastructure/Persistence/Migrations/`.
