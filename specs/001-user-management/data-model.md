@@ -8,7 +8,7 @@ Usuário da aplicação baseado no modelo de ASP.NET Core Identity (`IdentityUse
 |---|---|---|
 | Id | string | Identificador criado pelo Identity; usado nas rotas de usuário. |
 | Name | string | Obrigatório; nome exibido nos contratos da API. |
-| UserName | string | Obrigatório; login apresentado ao usuário. Espaços externos são removidos e a comparação é sem distinção de caixa após normalização. |
+| UserName | string | Obrigatório; de 1 a 30 caracteres ASCII: letras, números, ponto ou sublinhado. Ponto não pode iniciar/terminar nem aparecer em sequência. Espaços externos são removidos; comparação sem distinção de caixa após normalização. |
 | NormalizedUserName | string | Derivado pelo normalizador do Identity; índice único garante unicidade no armazenamento. |
 | PasswordHash | string? | Gerenciado pelo Identity; nunca exposto em contratos ou logs. Nunca recebe senha em texto puro. |
 | SecurityStamp / ConcurrencyStamp | string | Gerenciados pelo Identity para segurança e concorrência. |
@@ -27,4 +27,4 @@ Usar `IdentityRole` e relacionamento de usuário/papel do Identity. Papel `Maste
 
 ## Política de senha
 
-O Identity valida e armazena credenciais. Tamanho e composição exatos ainda precisam ser acordados antes da implementação e serão configurados no `IdentityOptions`; não presumir que valores padrão sejam uma decisão de produto.
+A senha deve ter no mínimo 8 caracteres; não há exigência de caixa, dígitos ou símbolos nesta versão. Configurar o Identity para refletir explicitamente essa política. Persistir somente o hash gerado pelo Identity; hash é uma transformação unidirecional para verificação, não uma senha cifrada para recuperação.

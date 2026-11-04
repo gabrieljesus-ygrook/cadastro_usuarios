@@ -10,7 +10,7 @@ A documentação do Identity API descreve autenticação para SPAs e observa que
 
 ## Senhas e Master inicial
 
-**Decisão**: usar `UserManager`/`SignInManager` e o hasher do Identity; nunca armazenar senha própria nem usar `HasData` para credenciais. O Master inicial é criado por comando administrativo explícito que usa `RoleManager` e `UserManager`, sem rota pública e sem execução automática em cada instância da API.
+**Decisão**: usar `UserManager`/`SignInManager` e o hasher do Identity; nunca armazenar senha própria nem usar `HasData` para credenciais. Senhas devem ter pelo menos 8 caracteres, sem regra extra de composição nesta versão. O valor persistido é um hash unidirecional (não criptografia reversível); o Identity verifica a senha por meio do hasher. O Master inicial é criado por comando administrativo explícito que usa `RoleManager` e `UserManager`, sem rota pública e sem execução automática em cada instância da API.
 
 User Secrets ficam fora do diretório do projeto e são apropriados para desenvolvimento, mas não são criptografados; produção deve usar secret store. O EF Core alerta que contas Identity e hashing exigem lógica de aplicação, e que seed automático pode conflitar quando há múltiplas instâncias. Fontes: [Identity model customizado (.NET 10)](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-10.0), [configuração do Identity (.NET 10)](https://learn.microsoft.com/en-us/aspnet/core/security/identity-configuration?view=aspnetcore-10.0), [`UserManager<TUser>` (.NET 10)](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.usermanager-1?view=aspnetcore-10.0), [seeding no EF Core](https://learn.microsoft.com/en-us/ef/core/modeling/data-seeding), [segredos de aplicação (.NET 10)](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-10.0).
 
@@ -20,9 +20,24 @@ User Secrets ficam fora do diretório do projeto e são apropriados para desenvo
 
 Manter migrations no repositório e aplicar explicitamente em desenvolvimento. Para produção, gerar bundle ou script SQL revisável e aplicar com identidade de deploy de schema. Fontes: [migrations](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/), [aplicação de migrations](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying), [ferramentas EF Core CLI](https://learn.microsoft.com/en-us/ef/core/cli/dotnet).
 
+## Separação entre leitura e escrita (CQRS)
+
+**Decisão**: não usar CQRS completo nem adicionar MediatR/um framework de dispatch nesta primeira versão. A API é CRUD simples e usa um único modelo e banco; esse padrão acrescentaria estrutura sem uma exigência atual de escala ou regras complexas. Manter operações de leitura sem efeitos colaterais e operações de escrita separadas, mas no mesmo projeto e no mesmo banco. Para eficiência, as consultas selecionam apenas os campos necessários, não rastreiam entidades quando são somente leitura e limitam/paginam resultados. Revisitar a decisão quando requisitos ou medições mostrarem benefício concreto.
+
+A documentação da Microsoft aponta CQRS como útil quando há diferenças relevantes entre demandas de leitura e escrita, e reconhece que CRUD simples pode ser atendido com uma solução mais direta. EF Core recomenda projeção, limitar resultados e considerar consultas sem tracking conforme o caso. Fontes: [padrão CQRS no Azure Architecture Center](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs), [CQRS simplificado em .NET](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/apply-simplified-microservice-cqrs-ddd-patterns), [consultas eficientes no EF Core](https://learn.microsoft.com/en-us/ef/core/performance/efficient-querying).
+
+## Estratégia de testes e TDD
+
+**Decisão**: seguir Red-Green-Refactor em cada comportamento. Usar xUnit e `WebApplicationFactory` no projeto de integração para exercitar endpoints HTTP, cookies, autorização e antiforgery. Para regras que dependem de SQL Server, executar integração contra um banco de teste isolado configurado fora do repositório; não usar o provider EF Core InMemory como substituto relacional. Preferir um conjunto pequeno de cenários representativos de cada operação CRUD, em vez de duplicar toda regra em múltiplas camadas de teste. Criar um projeto unitário separado somente se surgir lógica isolada que justifique essa divisão.
+
+A documentação ASP.NET Core recomenda `WebApplicationFactory`/`TestServer` para testes de integração e diferencia esses testes dos unitários; a documentação EF/ASP.NET alerta que o provider InMemory é limitado e recomenda uma alternativa relacional para testes. Fontes: [testes de integração ASP.NET Core (.NET 10)](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0), [testes unitários em C# com xUnit](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-dotnet-test), [`dotnet test`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test).
+
+## Transação para preservar o último Master
+
+**Decisão**: verificar a quantidade de membros da role `Master` e excluir uma conta Master dentro da mesma transação SQL Server `SERIALIZABLE`. Esse nível mantém os locks de leitura e protege contra mudanças concorrentes no conjunto consultado até a transação terminar. Testar duas exclusões concorrentes com a integração SQL Server. `SERIALIZABLE` é usado somente nesta operação crítica para limitar o custo de bloqueio. Fonte: [guia de locks e níveis de isolamento do SQL Server](https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide?view=sql-server-ver17).
+
 ## Decisões ainda necessárias antes da implementação
 
-- Aprovar requisitos de senha (tamanho mínimo e composição). Não foram inventados nesta fase; o plano preserva o uso do validador do Identity, mas a política precisa ser registrada antes das tarefas de implementação.
 - Confirmar a origem de hospedagem do Angular e da API quando o frontend começar; isso decide detalhes de CORS e cookies. A API começa preparada para cookies e antiforgery.
 - Escolher nomes finais de solution/projetos e strings de conexão no início da implementação, mantendo a estrutura definida no plano.
 

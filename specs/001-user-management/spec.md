@@ -104,7 +104,9 @@ Como Master, quero excluir um usuário comum para que ele deixe de aparecer nas 
 ### Casos de borda
 
 - Nome, login ou senha ausentes ou vazios.
+- Senha com menos de 8 caracteres.
 - Login já utilizado no cadastro ou edição.
+- Login vazio, maior que 30 caracteres, com caractere não permitido, ponto no início/fim ou pontos consecutivos.
 - Identificador inexistente em consulta, edição ou exclusão.
 - Solicitação não autenticada ou sem privilégio de Master.
 - Tentativa de excluir ou retirar o privilégio do último Master.
@@ -119,7 +121,7 @@ Como Master, quero excluir um usuário comum para que ele deixe de aparecer nas 
 - **FR-003**: O sistema NÃO DEVE permitir cadastro público de usuários.
 - **FR-004**: O primeiro Master DEVE ser provisionado antes do uso das operações de gerenciamento, com credenciais fornecidas fora do controle de versão.
 - **FR-005**: O Master DEVE poder cadastrar usuários comuns informando nome, login e senha.
-- **FR-006**: Cada login DEVE ser exclusivo.
+- **FR-006**: Cada login DEVE ser exclusivo, sem distinção entre maiúsculas e minúsculas.
 - **FR-007**: O Master DEVE poder listar e consultar usuários individuais sem receber suas senhas.
 - **FR-008**: O Master DEVE poder editar nome e login sem alterar a senha nessa operação.
 - **FR-009**: O Master DEVE poder alterar a senha de um usuário por uma ação separada.
@@ -128,6 +130,8 @@ Como Master, quero excluir um usuário comum para que ele deixe de aparecer nas 
 - **FR-012**: O sistema DEVE informar quando o usuário consultado, editado ou excluído não existir.
 - **FR-013**: O sistema DEVE recusar operações com dados obrigatórios ausentes ou inválidos.
 - **FR-014**: O sistema NUNCA DEVE devolver senhas em respostas de operações de usuário.
+- **FR-015**: A senha DEVE conter no mínimo 8 caracteres; não há exigência adicional de composição nesta versão.
+- **FR-016**: O login DEVE conter de 1 a 30 caracteres, usando somente letras ASCII (`A-Z`, `a-z`), números (`0-9`), ponto (`.`) e sublinhado (`_`). Ponto não pode iniciar ou terminar o login nem aparecer em sequência.
 
 ### Entidades principais
 
@@ -147,9 +151,10 @@ Como Master, quero excluir um usuário comum para que ele deixe de aparecer nas 
 ## Premissas
 
 - Nome, login e senha são obrigatórios no cadastro.
-- Login identifica exclusivamente um usuário; será comparado sem distinção entre maiúsculas/minúsculas após normalização e remoção de espaços externos. Caracteres permitidos e limites de tamanho serão definidos antes da implementação.
+- Login identifica exclusivamente um usuário; será comparado sem distinção entre maiúsculas/minúsculas após normalização e remoção de espaços externos. Deve ter de 1 a 30 caracteres: letras ASCII, números, ponto e sublinhado; ponto não pode ficar no início/fim nem aparecer em sequência.
 - Usuários criados pelo Master são contas comuns. Não há cadastro público nem autenticação de usuários comuns nesta etapa.
 - A troca de senha ocorre em ação separada do Master; a senha nunca aparece em respostas.
+- As senhas devem ter no mínimo 8 caracteres. O sistema não exige tipos específicos de caracteres nesta versão.
 - O último Master ativo não pode ser excluído nem perder seu privilégio.
 - As credenciais iniciais do Master são fornecidas fora do controle de versão; o processo de provisionamento será definido no plano.
 - A interface para consulta será especificada em uma etapa futura.

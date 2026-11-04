@@ -1,3 +1,11 @@
 # Spec Kit project files (kept local)
 .specify/
 .agents/
+
+
+# .NET build output
+bin/
+obj/
+*.user
+*.suo
+packages/

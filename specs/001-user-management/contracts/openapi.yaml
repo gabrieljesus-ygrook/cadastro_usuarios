@@ -230,8 +230,8 @@ components:
       type: object
       required: [login, password]
       properties:
-        login: { type: string }
-        password: { type: string, format: password }
+        login: { type: string, minLength: 1, maxLength: 30, pattern: '^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)*$' }
+        password: { type: string, format: password, minLength: 8 }
     Session:
       type: object
       required: [id, name, login]
@@ -261,19 +261,19 @@ components:
       required: [name, login, password]
       properties:
         name: { type: string }
-        login: { type: string }
-        password: { type: string, format: password }
+        login: { type: string, minLength: 1, maxLength: 30, pattern: '^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)*$' }
+        password: { type: string, format: password, minLength: 8 }
     UpdateUserRequest:
       type: object
       minProperties: 1
       properties:
         name: { type: string }
-        login: { type: string }
+        login: { type: string, minLength: 1, maxLength: 30, pattern: '^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)*$' }
     ChangePasswordRequest:
       type: object
       required: [newPassword]
       properties:
-        newPassword: { type: string, format: password }
+        newPassword: { type: string, format: password, minLength: 8 }
     Problem:
       type: object
       properties:

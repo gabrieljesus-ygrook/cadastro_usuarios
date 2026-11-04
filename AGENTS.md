@@ -10,6 +10,8 @@
 ## Princípios de arquitetura e código
 
 - Aplique SOLID para manter responsabilidades coesas, dependências explícitas e componentes substituíveis quando isso trouxer valor real.
+- Desenvolva com TDD: escreva primeiro um teste automatizado para o comportamento, confirme que falha pelo motivo esperado, implemente a menor mudança que o faça passar e refatore mantendo a suíte verde (Red-Green-Refactor). Não escreva testes apenas para cobrir implementação; verifique comportamento observável com a menor camada de teste adequada.
+- Para endpoints e integração com Identity/EF Core, cubra os contratos e regras críticas com testes de integração. Use testes unitários para lógica isolada quando agregarem valor; não substitua a verificação de persistência relacional por mocks ou pelo provider EF InMemory.
 - Prefira composição. Crie interfaces e abstrações nas fronteiras necessárias ou quando houver uma razão concreta; evite camadas e padrões sem necessidade demonstrada.
 - Siga a skill `modern-csharp-coding-standards` como referência para C# moderno, sem tratar cada recomendação como regra mecânica quando ela prejudicar clareza ou compatibilidade com EF Core.
 - Habilite e respeite nullable reference types. Trate valores nulos explicitamente.
@@ -33,6 +35,7 @@
 
 - Trabalhe em modo de programação em dupla, ajudando o usuário a desenvolver o projeto e a entender as decisões técnicas.
 - Divida o trabalho em tarefas pequenas. Antes de cada etapa, explique brevemente os conceitos e as opções relevantes.
+- Em cada tarefa de comportamento, siga o ciclo TDD e mostre ao usuário o teste falhando antes de implementar; depois explique por que passou e refatore se necessário.
 - Quando fizer sentido, convide o usuário a tentar uma parte do código e depois revise a solução, explicando os ajustes e o raciocínio.
 - Se o usuário travar ou pedir implementação direta, avance com ele passo a passo ou implemente a parte solicitada e explique como funciona.
 - Ao concluir uma etapa significativa, resuma o que foi aprendido, as decisões tomadas e o próximo passo previsto.
