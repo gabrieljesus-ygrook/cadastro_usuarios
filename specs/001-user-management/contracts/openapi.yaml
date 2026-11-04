@@ -1,0 +1,296 @@
+openapi: 3.1.0
+info:
+  title: Cadastro de Usuários API
+  version: 1.0.0
+  description: Contrato inicial para autenticação do Master e administração de usuários.
+servers:
+  - url: https://localhost:7001
+paths:
+  /api/auth/antiforgery:
+    get:
+      summary: Obter token antiforgery
+      description: Emite o cookie e o token necessários para chamadas protegidas por cookie que alteram estado.
+      responses:
+        '200':
+          description: Token disponibilizado para o cliente.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [requestToken]
+                properties:
+                  requestToken:
+                    type: string
+  /api/auth/login:
+    post:
+      summary: Autenticar Master
+      description: Autentica por login e senha e estabelece cookie de sessão. Não existe registro público.
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/AntiforgeryToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '204':
+          description: Autenticado; cookie definido na resposta.
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          description: Credenciais inválidas.
+  /api/auth/logout:
+    post:
+      summary: Encerrar sessão
+      security:
+        - cookieAuth: []
+      parameters:
+        - $ref: '#/components/parameters/AntiforgeryToken'
+      responses:
+        '204':
+          description: Sessão encerrada.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/auth/session:
+    get:
+      summary: Consultar sessão atual
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Identidade da sessão autenticada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/users:
+    get:
+      summary: Listar usuários
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1, default: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+      responses:
+        '200':
+          description: Página de usuários; nunca inclui credenciais.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      summary: Cadastrar usuário comum
+      security:
+        - cookieAuth: []
+      parameters:
+        - $ref: '#/components/parameters/AntiforgeryToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: Usuário criado.
+          headers:
+            Location:
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: Login já utilizado.
+  /api/users/{id}:
+    parameters:
+      - $ref: '#/components/parameters/UserId'
+    get:
+      summary: Consultar usuário
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Usuário encontrado, sem credenciais.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Atualizar nome e/ou login
+      description: Esta operação nunca altera a senha.
+      security:
+        - cookieAuth: []
+      parameters:
+        - $ref: '#/components/parameters/AntiforgeryToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateUserRequest' }
+      responses:
+        '200':
+          description: Perfil atualizado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Login já utilizado por outra conta.
+    delete:
+      summary: Excluir usuário comum
+      security:
+        - cookieAuth: []
+      parameters:
+        - $ref: '#/components/parameters/AntiforgeryToken'
+      responses:
+        '204':
+          description: Usuário excluído.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Excluir a conta deixaria o sistema sem Master ativo.
+  /api/users/{id}/password:
+    put:
+      summary: Alterar senha de usuário
+      description: A senha é fornecida apenas nesta ação e nunca é devolvida.
+      security:
+        - cookieAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/AntiforgeryToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChangePasswordRequest' }
+      responses:
+        '204':
+          description: Senha alterada.
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: .AspNetCore.Identity.Application
+  parameters:
+    UserId:
+      in: path
+      name: id
+      required: true
+      schema: { type: string }
+    AntiforgeryToken:
+      in: header
+      name: RequestVerificationToken
+      required: true
+      schema: { type: string }
+  schemas:
+    LoginRequest:
+      type: object
+      required: [login, password]
+      properties:
+        login: { type: string }
+        password: { type: string, format: password }
+    Session:
+      type: object
+      required: [id, name, login]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        login: { type: string }
+    User:
+      type: object
+      required: [id, name, login]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        login: { type: string }
+    UserPage:
+      type: object
+      required: [items, page, pageSize, totalCount]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/User' }
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalCount: { type: integer }
+    CreateUserRequest:
+      type: object
+      required: [name, login, password]
+      properties:
+        name: { type: string }
+        login: { type: string }
+        password: { type: string, format: password }
+    UpdateUserRequest:
+      type: object
+      minProperties: 1
+      properties:
+        name: { type: string }
+        login: { type: string }
+    ChangePasswordRequest:
+      type: object
+      required: [newPassword]
+      properties:
+        newPassword: { type: string, format: password }
+    Problem:
+      type: object
+      properties:
+        type: { type: string, format: uri-reference }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        instance: { type: string, format: uri-reference }
+  responses:
+    InvalidRequest:
+      description: Corpo inválido ou regra de validação não atendida.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Unauthorized:
+      description: Autenticação ausente ou inválida.
+    Forbidden:
+      description: Conta autenticada sem papel Master.
+    NotFound:
+      description: Usuário não encontrado.
