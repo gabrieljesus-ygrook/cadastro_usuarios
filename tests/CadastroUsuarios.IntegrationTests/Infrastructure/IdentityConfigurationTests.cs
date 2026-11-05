@@ -28,6 +28,11 @@ public sealed class IdentityConfigurationTests
 
             Assert.Equal("Microsoft.EntityFrameworkCore.SqlServer", database.Database.ProviderName);
             Assert.Equal(8, identityOptions.Password.RequiredLength);
+            Assert.Equal(0, identityOptions.Password.RequiredUniqueChars);
+            Assert.False(identityOptions.Password.RequireDigit);
+            Assert.False(identityOptions.Password.RequireLowercase);
+            Assert.False(identityOptions.Password.RequireNonAlphanumeric);
+            Assert.False(identityOptions.Password.RequireUppercase);
             Assert.NotNull(userManager);
         }
         finally
