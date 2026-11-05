@@ -113,13 +113,13 @@ description: "Tarefas de implementaÃ§Ã£o TDD para gerenciamento de usuÃ¡ri
 
 ### Red â€” testes primeiro
 
-- [ ] T040 [US5] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Users/ChangeUserPasswordTests.cs` testes de troca vÃ¡lida, polÃ­tica mÃ­nima, 404, 401/403 e resposta sem credenciais; executar `dotnet test` e confirmar falhas esperadas.
+- [X] T040 [US5] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Users/ChangeUserPasswordTests.cs` testes de troca vÃ¡lida, polÃ­tica mÃ­nima, 404, 401/403 e resposta sem credenciais; executar `dotnet test` e confirmar falhas esperadas.
 
 ### Green e Refactor â€” implementaÃ§Ã£o
 
-- [ ] T041 [US5] Criar `src/CadastroUsuarios.Api/Features/Users/ChangeUserPasswordRequest.cs` com campo obrigatÃ³rio `newPassword` e mÃ­nimo de 8 caracteres.
-- [ ] T042 [US5] Implementar `PUT /api/users/{id}/password` em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs` usando `GeneratePasswordResetTokenAsync` e `ResetPasswordAsync`, retornando 204 sem credencial.
-- [ ] T043 [US5] Mapear a troca de senha com autorizaÃ§Ã£o Master e antiforgery em `src/CadastroUsuarios.Api/Program.cs`; executar testes US5 e refatorar atÃ© ficarem verdes.
+- [X] T041 [US5] Criar `src/CadastroUsuarios.Api/Features/Users/ChangeUserPasswordRequest.cs` com campo obrigatÃ³rio `newPassword` e mÃ­nimo de 8 caracteres.
+- [X] T042 [US5] Implementar `PUT /api/users/{id}/password` em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs` usando `GeneratePasswordResetTokenAsync` e `ResetPasswordAsync`, retornando 204 sem credencial.
+- [X] T043 [US5] Mapear a troca de senha com autorizaÃ§Ã£o Master e antiforgery em `src/CadastroUsuarios.Api/Program.cs`; executar testes US5 e refatorar atÃ© ficarem verdes.
 
 ## Fase 8: HistÃ³ria 6 â€” Excluir usuÃ¡rio (Prioridade: P4)
 

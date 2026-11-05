@@ -97,6 +97,27 @@ public static class UserEndpoints
         return Results.Ok(new UserResponse(user.Id, user.Name, user.UserName!));
     }
 
+    public static async Task<IResult> ChangePasswordAsync(
+        string id,
+        ChangeUserPasswordRequest request,
+        UserManager<ApplicationUser> userManager)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return Results.NotFound();
+        }
+
+        var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
+        var resetResult = await userManager.ResetPasswordAsync(user, resetToken, request.NewPassword);
+        if (!resetResult.Succeeded)
+        {
+            return MapIdentityFailure(resetResult);
+        }
+
+        return Results.NoContent();
+    }
+
     public static async Task<IResult> CreateAsync(
         CreateUserRequest request,
         UserManager<ApplicationUser> userManager)

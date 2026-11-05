@@ -104,6 +104,10 @@ app.MapPut("/api/users/{id}", UserEndpoints.UpdateUserAsync)
     .RequireAuthorization("Master")
     .WithMetadata(new RequireAntiforgeryTokenAttribute(true));
 
+app.MapPut("/api/users/{id}/password", UserEndpoints.ChangePasswordAsync)
+    .RequireAuthorization("Master")
+    .WithMetadata(new RequireAntiforgeryTokenAttribute(true));
+
 app.MapPost("/api/users", UserEndpoints.CreateAsync)
     .RequireAuthorization("Master")
     .WithMetadata(new RequireAntiforgeryTokenAttribute(true));
