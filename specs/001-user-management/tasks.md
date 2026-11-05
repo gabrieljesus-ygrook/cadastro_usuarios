@@ -97,13 +97,13 @@ description: "Tarefas de implementaÃ§Ã£o TDD para gerenciamento de usuÃ¡ri
 
 ### Red â€” testes primeiro
 
-- [ ] T036 [US4] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Users/UpdateUserTests.cs` testes de ediÃ§Ã£o parcial, login duplicado, formato e tamanho invÃ¡lidos do login, 404, 401/403 e senha inalterada; executar `dotnet test` e confirmar falhas esperadas.
+- [X] T036 [US4] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Users/UpdateUserTests.cs` testes de ediÃ§Ã£o parcial, login duplicado, formato e tamanho invÃ¡lidos do login, 404, 401/403 e senha inalterada; executar `dotnet test` e confirmar falhas esperadas.
 
 ### Green e Refactor â€” implementaÃ§Ã£o
 
-- [ ] T037 [US4] Criar `src/CadastroUsuarios.Api/Features/Users/UpdateUserRequest.cs` com campos editÃ¡veis `name` e `login`, sem campo de senha.
-- [ ] T038 [US4] Implementar `PUT /api/users/{id}` em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs` com atualizaÃ§Ã£o Identity, normalizaÃ§Ã£o de login, conflito e 404.
-- [ ] T039 [US4] Mapear ediÃ§Ã£o com autorizaÃ§Ã£o Master e antiforgery em `src/CadastroUsuarios.Api/Program.cs`; executar testes US4 e refatorar atÃ© ficarem verdes.
+- [X] T037 [US4] Criar `src/CadastroUsuarios.Api/Features/Users/UpdateUserRequest.cs` com campos editÃ¡veis `name` e `login`, sem campo de senha.
+- [X] T038 [US4] Implementar `PUT /api/users/{id}` em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs` com atualizaÃ§Ã£o Identity, normalizaÃ§Ã£o de login, conflito e 404.
+- [X] T039 [US4] Mapear ediÃ§Ã£o com autorizaÃ§Ã£o Master e antiforgery em `src/CadastroUsuarios.Api/Program.cs`; executar testes US4 e refatorar atÃ© ficarem verdes.
 
 ## Fase 7: HistÃ³ria 5 â€” Alterar senha (Prioridade: P3)
 

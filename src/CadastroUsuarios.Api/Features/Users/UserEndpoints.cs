@@ -67,6 +67,36 @@ public static class UserEndpoints
         return Results.Ok(user);
     }
 
+    public static async Task<IResult> UpdateUserAsync(
+        string id,
+        UpdateUserRequest request,
+        UserManager<ApplicationUser> userManager)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return Results.NotFound();
+        }
+
+        if (request.Name is not null)
+        {
+            user.Name = request.Name;
+        }
+
+        if (request.Login is not null)
+        {
+            user.UserName = request.Login.Trim();
+        }
+
+        var updateResult = await userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            return MapIdentityFailure(updateResult);
+        }
+
+        return Results.Ok(new UserResponse(user.Id, user.Name, user.UserName!));
+    }
+
     public static async Task<IResult> CreateAsync(
         CreateUserRequest request,
         UserManager<ApplicationUser> userManager)
@@ -81,26 +111,31 @@ public static class UserEndpoints
         var creationResult = await userManager.CreateAsync(user, request.Password);
         if (!creationResult.Succeeded)
         {
-            if (creationResult.Errors.Any(error => error.Code == "DuplicateUserName"))
-            {
-                return Results.Conflict();
-            }
-
-            var validationErrors = creationResult.Errors
-                .GroupBy(error => error.Code switch
-                {
-                    "InvalidUserName" => "login",
-                    _ when error.Code.StartsWith("Password", StringComparison.Ordinal) => "password",
-                    _ => "request"
-                })
-                .ToDictionary(
-                    group => group.Key,
-                    group => group.Select(error => error.Description).ToArray());
-
-            return Results.ValidationProblem(validationErrors);
+            return MapIdentityFailure(creationResult);
         }
 
         var response = new UserResponse(user.Id, user.Name, login);
         return Results.Created($"/api/users/{user.Id}", response);
+    }
+
+    private static IResult MapIdentityFailure(IdentityResult identityResult)
+    {
+        if (identityResult.Errors.Any(error => error.Code == "DuplicateUserName"))
+        {
+            return Results.Conflict();
+        }
+
+        var validationErrors = identityResult.Errors
+            .GroupBy(error => error.Code switch
+            {
+                "InvalidUserName" => "login",
+                _ when error.Code.StartsWith("Password", StringComparison.Ordinal) => "password",
+                _ => "request"
+            })
+            .ToDictionary(
+                group => group.Key,
+                group => group.Select(error => error.Description).ToArray());
+
+        return Results.ValidationProblem(validationErrors);
     }
 }

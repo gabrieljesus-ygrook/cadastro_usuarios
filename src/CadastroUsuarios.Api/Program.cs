@@ -100,6 +100,10 @@ app.MapGet("/api/users", UserEndpoints.GetUsersAsync)
 app.MapGet("/api/users/{id}", UserEndpoints.GetUserAsync)
     .RequireAuthorization("Master");
 
+app.MapPut("/api/users/{id}", UserEndpoints.UpdateUserAsync)
+    .RequireAuthorization("Master")
+    .WithMetadata(new RequireAntiforgeryTokenAttribute(true));
+
 app.MapPost("/api/users", UserEndpoints.CreateAsync)
     .RequireAuthorization("Master")
     .WithMetadata(new RequireAntiforgeryTokenAttribute(true));
