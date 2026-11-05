@@ -80,14 +80,14 @@ description: "Tarefas de implementaÃ§Ã£o TDD para gerenciamento de usuÃ¡ri
 
 ### Red â€” testes primeiro
 
-- [ ] T031 [US3] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Users/ReadUsersTests.cs` testes de listagem, paginaÃ§Ã£o, detalhe, 404, 401/403 e ausÃªncia de campos internos; executar `dotnet test` e confirmar falhas esperadas.
+- [X] T031 [US3] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Users/ReadUsersTests.cs` testes de listagem, paginaÃ§Ã£o, detalhe, 404, 401/403 e ausÃªncia de campos internos; executar `dotnet test` e confirmar falhas esperadas.
 
 ### Green e Refactor â€” implementaÃ§Ã£o
 
-- [ ] T032 [US3] Criar `src/CadastroUsuarios.Api/Features/Users/UserPageResponse.cs` com `items`, `page`, `pageSize` e `totalCount`.
-- [ ] T033 [US3] Implementar `GET /api/users` em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs` com paginaÃ§Ã£o limitada, projeÃ§Ã£o pÃºblica e consulta somente leitura.
-- [ ] T034 [US3] Implementar `GET /api/users/{id}` em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs`, retornando 404 para conta ausente e sem campos internos de Identity.
-- [ ] T035 [US3] Mapear e proteger consultas com autorizaÃ§Ã£o Master em `src/CadastroUsuarios.Api/Program.cs`; executar testes US3 e refatorar atÃ© ficarem verdes.
+- [X] T032 [US3] Criar `src/CadastroUsuarios.Api/Features/Users/UserPageResponse.cs` com `items`, `page`, `pageSize` e `totalCount`.
+- [X] T033 [US3] Implementar `GET /api/users` em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs` com paginaÃ§Ã£o limitada, projeÃ§Ã£o pÃºblica e consulta somente leitura.
+- [X] T034 [US3] Implementar `GET /api/users/{id}` em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs`, retornando 404 para conta ausente e sem campos internos de Identity.
+- [X] T035 [US3] Mapear e proteger consultas com autorizaÃ§Ã£o Master em `src/CadastroUsuarios.Api/Program.cs`; executar testes US3 e refatorar atÃ© ficarem verdes.
 
 ## Fase 6: HistÃ³ria 4 â€” Editar perfil (Prioridade: P3)
 

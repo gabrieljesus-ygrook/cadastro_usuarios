@@ -95,6 +95,11 @@ app.UseAntiforgery();
 app.MapAuthEndpoints()
     .RequireAuthorization("Master");
 
+app.MapGet("/api/users", UserEndpoints.GetUsersAsync)
+    .RequireAuthorization("Master");
+app.MapGet("/api/users/{id}", UserEndpoints.GetUserAsync)
+    .RequireAuthorization("Master");
+
 app.MapPost("/api/users", UserEndpoints.CreateAsync)
     .RequireAuthorization("Master")
     .WithMetadata(new RequireAntiforgeryTokenAttribute(true));
