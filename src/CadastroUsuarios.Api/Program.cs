@@ -1,4 +1,5 @@
 using CadastroUsuarios.Api.Features.Authentication;
+using CadastroUsuarios.Api.Features.Users;
 using CadastroUsuarios.Api.Infrastructure.Identity;
 using CadastroUsuarios.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Antiforgery;
@@ -12,6 +13,7 @@ var builder = WebApplication.CreateBuilder(builderArgs);
 
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
+builder.Services.AddValidation();
 builder.Services.AddAntiforgery(options =>
 {
     options.HeaderName = "RequestVerificationToken";
@@ -92,6 +94,10 @@ app.UseAntiforgery();
 
 app.MapAuthEndpoints()
     .RequireAuthorization("Master");
+
+app.MapPost("/api/users", UserEndpoints.CreateAsync)
+    .RequireAuthorization("Master")
+    .WithMetadata(new RequireAntiforgeryTokenAttribute(true));
 
 app.Run();
 
