@@ -129,22 +129,22 @@ description: "Tarefas de implementaÃ§Ã£o TDD para gerenciamento de usuÃ¡ri
 
 ### Red â€” testes primeiro
 
-- [ ] T044 [US6] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Users/DeleteUserTests.cs` testes de exclusÃ£o comum, 404, 401/403, Ãºltimo Master e duas exclusÃµes concorrentes de Masters; executar `dotnet test` e confirmar falhas esperadas.
+- [X] T044 [US6] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Users/DeleteUserTests.cs` testes de exclusÃ£o comum, 404, 401/403, Ãºltimo Master e duas exclusÃµes concorrentes de Masters; executar `dotnet test` e confirmar falhas esperadas.
 
 ### Green e Refactor â€” implementaÃ§Ã£o
 
-- [ ] T045 [US6] Implementar `DELETE /api/users/{id}` em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs` com verificaÃ§Ã£o de existÃªncia e exclusÃ£o via `UserManager`.
-- [ ] T046 [US6] Executar a contagem de membros Master e a exclusÃ£o dentro de uma transaÃ§Ã£o `SERIALIZABLE` no mesmo `ApplicationDbContext`, retornando conflito se a conta for a Ãºltima, em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs`.
-- [ ] T047 [US6] Mapear exclusÃ£o com autorizaÃ§Ã£o Master e antiforgery em `src/CadastroUsuarios.Api/Program.cs`; executar testes US6 e refatorar atÃ© ficarem verdes.
+- [X] T045 [US6] Implementar `DELETE /api/users/{id}` em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs` com verificaÃ§Ã£o de existÃªncia e exclusÃ£o via `UserManager`.
+- [X] T046 [US6] Executar a contagem de membros Master e a exclusÃ£o dentro de uma transaÃ§Ã£o `SERIALIZABLE` no mesmo `ApplicationDbContext`, retornando conflito se a conta for a Ãºltima, em `src/CadastroUsuarios.Api/Features/Users/UserEndpoints.cs`.
+- [X] T047 [US6] Mapear exclusÃ£o com autorizaÃ§Ã£o Master e antiforgery em `src/CadastroUsuarios.Api/Program.cs`; executar testes US6 e refatorar atÃ© ficarem verdes.
 
 ## Fase 9: Polimento e alinhamento de contrato
 
 **Objetivo**: manter documentaÃ§Ã£o, comportamento e suÃ­te de testes coerentes.
 
-- [ ] T048 Atualizar `specs/001-user-management/quickstart.md` com comandos efetivos de configuraÃ§Ã£o, migration, bootstrap, testes e verificaÃ§Ã£o manual.
-- [ ] T049 Revisar `specs/001-user-management/contracts/openapi.yaml` contra os endpoints implementados e ajustar somente divergÃªncias aprovadas.
-- [ ] T050 Executar `dotnet test CadastroUsuarios.sln` e revisar o resultado antes de encerrar a implementaÃ§Ã£o.
-- [ ] T051 Revisar `src/CadastroUsuarios.Api/Program.cs` e arquivos das features para confirmar ausÃªncia de registro pÃºblico, segredos versionados e exposiÃ§Ã£o de dados de senha.
+- [X] T048 Atualizar `specs/001-user-management/quickstart.md` com comandos efetivos de configuraÃ§Ã£o, migration, bootstrap, testes e verificaÃ§Ã£o manual.
+- [X] T049 Revisar `specs/001-user-management/contracts/openapi.yaml` contra os endpoints implementados e ajustar somente divergÃªncias aprovadas.
+- [X] T050 Executar `dotnet test CadastroUsuarios.sln` e revisar o resultado antes de encerrar a implementaÃ§Ã£o.
+- [X] T051 Revisar `src/CadastroUsuarios.Api/Program.cs` e arquivos das features para confirmar ausÃªncia de registro pÃºblico, segredos versionados e exposiÃ§Ã£o de dados de senha.
 
 ## DependÃªncias e ordem
 

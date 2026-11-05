@@ -112,6 +112,10 @@ app.MapPost("/api/users", UserEndpoints.CreateAsync)
     .RequireAuthorization("Master")
     .WithMetadata(new RequireAntiforgeryTokenAttribute(true));
 
+app.MapDelete("/api/users/{id}", UserEndpoints.DeleteUserAsync)
+    .RequireAuthorization("Master")
+    .WithMetadata(new RequireAntiforgeryTokenAttribute(true));
+
 app.Run();
 
 public partial class Program;

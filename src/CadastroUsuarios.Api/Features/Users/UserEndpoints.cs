@@ -1,3 +1,4 @@
+using System.Data;
 using CadastroUsuarios.Api.Infrastructure.Identity;
 using CadastroUsuarios.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +8,8 @@ namespace CadastroUsuarios.Api.Features.Users;
 
 public static class UserEndpoints
 {
+    private const string MasterRoleName = "Master";
+
     public static async Task<IResult> GetUsersAsync(
         ApplicationDbContext dbContext,
         int page = 1,
@@ -115,6 +118,58 @@ public static class UserEndpoints
             return MapIdentityFailure(resetResult);
         }
 
+        return Results.NoContent();
+    }
+
+    public static async Task<IResult> DeleteUserAsync(
+        string id,
+        ApplicationDbContext dbContext,
+        UserManager<ApplicationUser> userManager)
+    {
+        await using var transaction = await dbContext.Database
+            .BeginTransactionAsync(IsolationLevel.Serializable);
+
+        // Serialize competing user deletions before reading the Master membership count.
+        await dbContext.Roles
+            .FromSqlInterpolated($"SELECT * FROM [AspNetRoles] WITH (UPDLOCK, HOLDLOCK) WHERE [Name] = {MasterRoleName}")
+            .AsNoTracking()
+            .SingleOrDefaultAsync();
+
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return Results.NotFound();
+        }
+
+        var masterRoleId = await dbContext.Roles
+            .Where(role => role.Name == MasterRoleName)
+            .Select(role => role.Id)
+            .SingleOrDefaultAsync();
+
+        if (masterRoleId is not null)
+        {
+            var userIsMaster = await dbContext.UserRoles
+                .AnyAsync(userRole => userRole.UserId == user.Id && userRole.RoleId == masterRoleId);
+
+            if (userIsMaster)
+            {
+                var masterCount = await dbContext.UserRoles
+                    .CountAsync(userRole => userRole.RoleId == masterRoleId);
+
+                if (masterCount <= 1)
+                {
+                    return Results.Conflict();
+                }
+            }
+        }
+
+        var deleteResult = await userManager.DeleteAsync(user);
+        if (!deleteResult.Succeeded)
+        {
+            return MapIdentityFailure(deleteResult);
+        }
+
+        await transaction.CommitAsync();
         return Results.NoContent();
     }
 

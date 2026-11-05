@@ -4,7 +4,10 @@ info:
   version: 1.0.0
   description: Contrato inicial para autenticação do Master e administração de usuários.
 servers:
-  - url: https://localhost:7001
+  - url: http://localhost:5044
+    description: Perfil HTTP de desenvolvimento.
+  - url: https://localhost:7214
+    description: Perfil HTTPS de desenvolvimento.
 paths:
   /api/auth/antiforgery:
     get:
@@ -51,8 +54,12 @@ paths:
       responses:
         '204':
           description: Sessão encerrada.
+        '400':
+          description: Token antiforgery ausente ou inválido.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /api/auth/session:
     get:
       summary: Consultar sessão atual
@@ -67,6 +74,8 @@ paths:
                 $ref: '#/components/schemas/Session'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /api/users:
     get:
       summary: Listar usuários
@@ -86,6 +95,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserPage'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -167,7 +178,8 @@ paths:
         '409':
           description: Login já utilizado por outra conta.
     delete:
-      summary: Excluir usuário comum
+      summary: Excluir usuário
+      description: Uma conta Master pode ser excluída somente se outra conta Master permanecer ativa.
       security:
         - cookieAuth: []
       parameters:
@@ -175,6 +187,8 @@ paths:
       responses:
         '204':
           description: Usuário excluído.
+        '400':
+          description: Token antiforgery ausente ou inválido.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -282,6 +296,11 @@ components:
         status: { type: integer }
         detail: { type: string }
         instance: { type: string, format: uri-reference }
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }
   responses:
     InvalidRequest:
       description: Corpo inválido ou regra de validação não atendida.
