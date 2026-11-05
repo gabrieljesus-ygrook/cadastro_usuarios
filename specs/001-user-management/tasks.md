@@ -42,17 +42,17 @@ description: "Tarefas de implementação TDD para gerenciamento de usuários"
 
 ### Red — testes primeiro
 
-- [ ] T017 [US1] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Authentication/AuthEndpointsTests.cs` os testes de login Master válido/inválido, recusa de conta comum, sessão, logout e antiforgery; executar `dotnet test` e confirmar falhas esperadas por endpoints ainda ausentes.
-- [ ] T018 [US1] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Authentication/MasterProvisioningTests.cs` os testes de criação e idempotência do bootstrap; executar `dotnet test` e confirmar falhas esperadas antes do provisionador.
+- [X] T017 [US1] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Authentication/AuthEndpointsTests.cs` os testes de login Master válido/inválido, recusa de conta comum, sessão, logout e antiforgery; executar `dotnet test` e confirmar falhas esperadas por endpoints ainda ausentes.
+- [X] T018 [US1] Escrever em `tests/CadastroUsuarios.IntegrationTests/Features/Authentication/MasterProvisioningTests.cs` os testes de criação e idempotência do bootstrap; executar `dotnet test` e confirmar falhas esperadas antes do provisionador.
 
 ### Green e Refactor — implementação
 
-- [ ] T019 [US1] Criar `src/CadastroUsuarios.Api/Infrastructure/Identity/MasterUserProvisioner.cs` para garantir a role `Master` e criar o usuário inicial via `RoleManager`/`UserManager` usando configuração externa.
-- [ ] T020 [US1] Implementar em `src/CadastroUsuarios.Api/Program.cs` o modo explícito `--provision-master`, sem rota HTTP e sem execução automática no startup normal.
-- [ ] T021 [US1] Criar `src/CadastroUsuarios.Api/Features/Authentication/LoginRequest.cs` como contrato com `login` e `password`, sem expor entidades Identity.
-- [ ] T022 [US1] Implementar `POST /api/auth/login` em `src/CadastroUsuarios.Api/Features/Authentication/AuthEndpoints.cs`, emitindo cookie somente após validar senha e role Master.
-- [ ] T023 [US1] Implementar `GET /api/auth/antiforgery`, `GET /api/auth/session` e `POST /api/auth/logout` em `src/CadastroUsuarios.Api/Features/Authentication/AuthEndpoints.cs`.
-- [ ] T024 [US1] Configurar cookies API, autorização Master, antiforgery e `ProblemDetails` em `src/CadastroUsuarios.Api/Program.cs`; mapear os endpoints, executar testes US1 e refatorar até ficarem verdes.
+- [X] T019 [US1] Criar `src/CadastroUsuarios.Api/Infrastructure/Identity/MasterUserProvisioner.cs` para garantir a role `Master` e criar o usuário inicial via `RoleManager`/`UserManager` usando configuração externa.
+- [X] T020 [US1] Implementar em `src/CadastroUsuarios.Api/Program.cs` o modo explícito `--provision-master`, sem rota HTTP e sem execução automática no startup normal.
+- [X] T021 [US1] Criar `src/CadastroUsuarios.Api/Features/Authentication/LoginRequest.cs` como contrato com `login` e `password`, sem expor entidades Identity.
+- [X] T022 [US1] Implementar `POST /api/auth/login` em `src/CadastroUsuarios.Api/Features/Authentication/AuthEndpoints.cs`, emitindo cookie somente após validar senha e role Master.
+- [X] T023 [US1] Implementar `GET /api/auth/antiforgery`, `GET /api/auth/session` e `POST /api/auth/logout` em `src/CadastroUsuarios.Api/Features/Authentication/AuthEndpoints.cs`.
+- [X] T024 [US1] Configurar cookies API, autorização Master, antiforgery e `ProblemDetails` em `src/CadastroUsuarios.Api/Program.cs`; mapear os endpoints, executar testes US1 e refatorar até ficarem verdes.
 
 ## Fase 4: História 2 — Cadastrar usuário (Prioridade: P1)
 

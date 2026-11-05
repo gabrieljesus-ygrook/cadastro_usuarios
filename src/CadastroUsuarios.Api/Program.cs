@@ -1,11 +1,26 @@
+using CadastroUsuarios.Api.Features.Authentication;
 using CadastroUsuarios.Api.Infrastructure.Identity;
 using CadastroUsuarios.Api.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+var provisionMasterMode = args.Contains("--provision-master", StringComparer.Ordinal);
+var builderArgs = args.Where(argument => argument != "--provision-master").ToArray();
+var builder = WebApplication.CreateBuilder(builderArgs);
 
 builder.Services.AddOpenApi();
+builder.Services.AddProblemDetails();
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "RequestVerificationToken";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = builder.Environment.IsProduction()
+        ? CookieSecurePolicy.Always
+        : CookieSecurePolicy.SameAsRequest;
+});
 
 var connectionString = builder.Configuration.GetConnectionString("TestDatabase")
     ?? builder.Configuration.GetConnectionString("DefaultConnection")
@@ -29,15 +44,54 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddScoped<MasterUserProvisioner>();
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("Master", policy => policy.RequireRole("Master"));
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = builder.Environment.IsProduction()
+        ? CookieSecurePolicy.Always
+        : CookieSecurePolicy.SameAsRequest;
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        return Task.CompletedTask;
+    };
+});
+
 var app = builder.Build();
 
+if (provisionMasterMode)
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    var provisioner = scope.ServiceProvider.GetRequiredService<MasterUserProvisioner>();
+    await provisioner.ProvisionAsync();
+    return;
+}
+
 // Configure the HTTP request pipeline.
+app.UseExceptionHandler();
+app.UseStatusCodePages();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseAntiforgery();
+
+app.MapAuthEndpoints()
+    .RequireAuthorization("Master");
 
 app.Run();
 
